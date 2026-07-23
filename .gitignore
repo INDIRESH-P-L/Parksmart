@@ -1,0 +1,34 @@
+# --- Node ---
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# --- Environment (never commit secrets) ---
+.env
+.env.local
+.env.*.local
+
+# --- Frontend build output ---
+frontend/dist/
+frontend/.vite/
+
+# --- Backend ---
+backend/coverage/
+backend/.local-db.json
+
+# --- Flutter / Mobile ---
+mobile/.dart_tool/
+mobile/.packages
+mobile/build/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/ios/Pods/
+*.iml
+
+# --- Editors / OS ---
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
