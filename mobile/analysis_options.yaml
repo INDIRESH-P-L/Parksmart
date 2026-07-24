@@ -1,0 +1,14 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # The demo intentionally prints booking/notification lifecycle events.
+    avoid_print: false
+
+# Generated platform folders (android/ios) come from `flutter create` and are
+# not linted as project source.
+analyzer:
+  exclude:
+    - android/**
+    - ios/**
+    - build/**

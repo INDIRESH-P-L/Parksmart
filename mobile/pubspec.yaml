@@ -1,0 +1,49 @@
+name: parksmart
+description: ParkSmart — Smart Parking Assistant (Flutter mobile client for the same /api/v1 backend).
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # state management
+  provider: ^6.1.2
+
+  # networking (talks to the same Express /api/v1 backend as web)
+  dio: ^5.7.0
+
+  # local persistence for the JWT + cached user
+  shared_preferences: ^2.3.2
+
+  # map (OpenStreetMap tiles — same source as the React Leaflet web map)
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+
+  # QR scanning at the gate (the wallet ticket image is rendered server-side and
+  # returned as a base64 PNG, so no client-side QR *generation* package is needed)
+  mobile_scanner: ^5.2.3
+
+  # local push notifications (booking confirmed / expiry warning)
+  flutter_local_notifications: ^17.2.3
+  timezone: ^0.9.4
+
+  # user geolocation → walking distance (haversine, no paid API)
+  geolocator: ^13.0.1
+
+  # formatting + fonts
+  intl: ^0.19.0
+  google_fonts: ^6.2.1
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  # Branding is drawn with widgets (see AppLogo), so no bundled image assets are
+  # required — keeps `flutter build` from failing on a missing-asset reference.

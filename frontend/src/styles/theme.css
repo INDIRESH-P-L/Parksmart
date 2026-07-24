@@ -1,0 +1,41 @@
+/* ParkSmart theme variables.
+   Dark is the primary/default theme (spec); a light glass variant exists for
+   the ThemeToggle. Components consume these vars so a theme switch is a pure
+   CSS swap — no re-render logic needed beyond the root class. */
+
+:root,
+.dark {
+  --bg: #0a0a0a;
+  --bg-soft: #101010;
+  --panel: rgba(32, 32, 32, 0.55);
+  --glass-tint-a: rgba(255, 255, 255, 0.09);
+  --glass-tint-b: rgba(255, 255, 255, 0.035);
+  --edge: rgba(255, 255, 255, 0.08);
+  --edge-strong: rgba(255, 255, 255, 0.35);
+  --text: #ffffff;
+  --text-sec: #b5b5b5;
+  --text-mut: #6f6f6f;
+  --accent: #d7ff1f;
+  --success: #9fff2d;
+  --mint: #10b981;
+  --danger: #ff5a5a;
+  --warn: #ffc93d;
+  --ripple: rgba(215, 255, 31, 0.09);
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+/* Light glass variant (optional per spec) — same tokens, inverted canvas. */
+html:not(.dark) {
+  --bg: #eef1ec;
+  --bg-soft: #e6eae3;
+  --panel: rgba(255, 255, 255, 0.6);
+  --glass-tint-a: rgba(255, 255, 255, 0.75);
+  --glass-tint-b: rgba(255, 255, 255, 0.35);
+  --edge: rgba(10, 10, 10, 0.08);
+  --edge-strong: rgba(10, 10, 10, 0.22);
+  --text: #101210;
+  --text-sec: #4a4f4a;
+  --text-mut: #8a8f8a;
+  --ripple: rgba(16, 185, 129, 0.1);
+  --shadow-glass: 0 8px 32px rgba(20, 40, 20, 0.12);
+}

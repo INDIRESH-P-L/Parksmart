@@ -1,0 +1,28 @@
+// Process entry point: boot the HTTP server, probe Supabase, wire graceful
+// shutdown and last-resort error logging.
+import app from './app.js';
+import { env } from './config/env.js';
+import { logger } from './utils/logger.js';
+import { checkConnection } from './config/db.js';
+
+const server = app.listen(env.PORT, () => {
+  logger.info(`ParkSmart API listening on http://localhost:${env.PORT} (${env.NODE_ENV})`);
+  // Non-blocking: warns loudly if Supabase creds/schema aren't set up yet,
+  // but keeps /health alive so deploys and tooling can still probe the box.
+  checkConnection();
+});
+
+const shutdown = (signal) => {
+  logger.info(`${signal} received — shutting down gracefully`);
+  server.close(() => process.exit(0));
+  // Safety hatch: if open connections refuse to drain, force-exit.
+  setTimeout(() => process.exit(1), 10_000).unref();
+};
+
+['SIGINT', 'SIGTERM'].forEach((signal) => process.on(signal, () => shutdown(signal)));
+
+process.on('unhandledRejection', (reason) => logger.error('Unhandled rejection:', reason));
+process.on('uncaughtException', (err) => {
+  logger.error('Uncaught exception:', err);
+  shutdown('uncaughtException');
+});

@@ -10,7 +10,7 @@ time, and gives admins live capacity management, QR gate check-in/out, and analy
 ParkSmart/
 ├── backend/    Node.js + Express + Supabase (PostgreSQL) REST API   ✅ Stage 1 (done)
 ├── frontend/   React 19 + Vite + Tailwind + Framer Motion + Leaflet ✅ Stage 2 (done)
-└── mobile/     Flutter app (same REST API, Android APK)             ⏳ Stage 3
+└── mobile/     Flutter app (same REST API, Android APK)             ✅ Stage 3 (done)
 ```
 
 **Stack:** Express, Supabase (PostgreSQL), JWT + bcrypt, zod, helmet, express-rate-limit,
@@ -128,6 +128,28 @@ Highlights:
 - `LazyMotion` + `MotionConfig` app-wide, `prefers-reduced-motion` respected, scroll
   position preserved on list pages.
 
-## 4 · Mobile (Stage 3 — coming next)
+## 4 · Mobile (Flutter)
 
-Flutter app in `mobile/`, release build via `flutter build apk --release`.
+A full Flutter client in `mobile/` that hits the **same `/api/v1` backend**, with the
+same green "Liquid Glass" language (frosted `BackdropFilter` cards, drifting blob
+background, Hero shared-element transitions).
+
+```bash
+cd mobile
+flutter create --org com.parksmart --platforms=android,ios .   # generate native folders
+flutter pub get
+flutter run                                                     # Android emulator → http://10.0.2.2:5000
+```
+
+Release APK: `flutter build apk --release --dart-define=API_URL=https://YOUR_API_HOST/api/v1`.
+
+Screens: Splash, Login/Register, Dashboard (floating stat tiles + zone heat map), Parking
+Map (`flutter_map` + OpenStreetMap, status-coloured pins), Slot Details (walking distance
+via geolocation + haversine), Book Slot (live price preview), My Bookings, **Active Ticket /
+Wallet** (full-screen QR for the gate), Profile, Admin Dashboard, and a **QR Scanner**
+(`mobile_scanner`) for operator/admin gate check-in/out. Local push notifications fire on
+booking confirmation and 15 min before expiry. State via `provider`, networking via `dio`
+through a shared `ApiService` that mirrors the web client (JWT injection + envelope
+unwrapping).
+
+Full setup, native permissions, and build details: [`mobile/README.md`](mobile/README.md).
