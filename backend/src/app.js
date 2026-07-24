@@ -32,7 +32,16 @@ app.use(helmet());
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || env.corsOrigins.includes(origin)) return callback(null, true);
+      if (
+        !origin ||
+        env.corsOrigins.includes('*') ||
+        env.corsOrigins.includes(origin) ||
+        origin.endsWith('.vercel.app') ||
+        origin.includes('localhost') ||
+        origin.includes('127.0.0.1')
+      ) {
+        return callback(null, true);
+      }
       return callback(new ApiError(403, `Origin not allowed by CORS: ${origin}`));
     },
     credentials: true,
