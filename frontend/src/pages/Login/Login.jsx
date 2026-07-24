@@ -60,43 +60,37 @@ export default function Login() {
             <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
             <p className="mt-1 text-sm text-[var(--text-sec)]">Sign in to find your next spot.</p>
 
-            <form onSubmit={handleSubmit} className="mt-7 space-y-4" noValidate>
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-[var(--text-sec)]" htmlFor="email">
+            <form onSubmit={handleSubmit} className="mt-7 space-y-5" noValidate>
+              <div className="flex flex-col gap-2">
+                <label className="block text-xs font-medium text-[var(--text-sec)]" htmlFor="email">
                   Email
                 </label>
-                <div className="relative">
-                  <FiMail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-mut)]" />
-                  <input
-                    id="email"
-                    type="email"
-                    autoComplete="email"
-                    value={form.email}
-                    onChange={set('email')}
-                    placeholder="you@campus.edu"
-                    className={cn('input-glass pl-10', errors.email && 'input-error')}
-                  />
-                </div>
-                {errors.email && <p className="mt-1 text-xs text-danger">{errors.email}</p>}
+                <input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  value={form.email}
+                  onChange={set('email')}
+                  placeholder="you@campus.edu"
+                  className={cn('input-glass w-full', errors.email && 'input-error')}
+                />
+                {errors.email && <p className="text-xs text-danger">{errors.email}</p>}
               </div>
 
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-[var(--text-sec)]" htmlFor="password">
+              <div className="flex flex-col gap-2">
+                <label className="block text-xs font-medium text-[var(--text-sec)]" htmlFor="password">
                   Password
                 </label>
-                <div className="relative">
-                  <FiLock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-mut)]" />
-                  <input
-                    id="password"
-                    type="password"
-                    autoComplete="current-password"
-                    value={form.password}
-                    onChange={set('password')}
-                    placeholder="••••••••"
-                    className={cn('input-glass pl-10', errors.password && 'input-error')}
-                  />
-                </div>
-                {errors.password && <p className="mt-1 text-xs text-danger">{errors.password}</p>}
+                <input
+                  id="password"
+                  type="password"
+                  autoComplete="current-password"
+                  value={form.password}
+                  onChange={set('password')}
+                  placeholder="••••••••"
+                  className={cn('input-glass w-full', errors.password && 'input-error')}
+                />
+                {errors.password && <p className="text-xs text-danger">{errors.password}</p>}
               </div>
 
               {serverError && (

@@ -85,8 +85,7 @@ export default function Profile() {
         <div className="space-y-6">
           <ProfileCard user={user} />
 
-          <Card title="Reservation history">
-            <div className="grid grid-cols-3 gap-3 text-center">
+          <Card title="Reservation history" bodyClassName="grid grid-cols-3 gap-3 text-center">
               <div className="rounded-card bg-white/5 p-3">
                 <p className="text-2xl font-bold">{history.total}</p>
                 <p className="text-[10px] uppercase tracking-wide text-[var(--text-mut)]">Total</p>
@@ -99,7 +98,6 @@ export default function Profile() {
                 <p className="text-2xl font-bold text-accent">{history.active}</p>
                 <p className="text-[10px] uppercase tracking-wide text-[var(--text-mut)]">Active</p>
               </div>
-            </div>
           </Card>
         </div>
 
