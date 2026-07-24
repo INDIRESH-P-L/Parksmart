@@ -6,7 +6,7 @@
       "src": "api/index.js",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": ["backend/**", "node_modules/**"]
+        "includeFiles": ["backend/**"]
       }
     },
     {
@@ -32,6 +32,7 @@
     }
   ]
 }
+
 
 
 
