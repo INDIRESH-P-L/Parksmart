@@ -1,3 +1,4 @@
+import { Router } from 'express';
 import { listSlots, getSlot, availability, heatmap, checkInSlot, checkOutSlot } from '../controllers/parkingController.js';
 import { auth } from '../middleware/auth.js';
 import { admin } from '../middleware/admin.js';
