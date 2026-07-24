@@ -14,7 +14,7 @@ router.get('/availability', availability);
 // but heatmap must NOT be public — admin-only aggregate view.
 router.get('/heatmap', auth, admin, heatmap);
 router.get('/slots/:id', validate(idParamSchema, 'params'), getSlot);
-router.post('/slots/:id/check-in', validate(idParamSchema, 'params'), checkInSlot);
-router.post('/slots/:id/check-out', validate(idParamSchema, 'params'), checkOutSlot);
+router.post('/slots/:id/check-in', auth, validate(idParamSchema, 'params'), checkInSlot);
+router.post('/slots/:id/check-out', auth, validate(idParamSchema, 'params'), checkOutSlot);
 
 export default router;

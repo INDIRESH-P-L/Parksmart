@@ -22,10 +22,10 @@ export const heatmap = asyncHandler(async (_req, res) =>
 );
 
 export const checkInSlot = asyncHandler(async (req, res) =>
-  ok(res, await parkingService.checkInSlot(req.params.id), 'Check-in successful')
+  ok(res, await parkingService.checkInSlot(req.params.id, req.user), 'Check-in successful')
 );
 
 export const checkOutSlot = asyncHandler(async (req, res) =>
-  ok(res, await parkingService.checkOutSlot(req.params.id), 'Check-out successful')
+  ok(res, await parkingService.checkOutSlot(req.params.id, req.user), 'Check-out successful')
 );
 

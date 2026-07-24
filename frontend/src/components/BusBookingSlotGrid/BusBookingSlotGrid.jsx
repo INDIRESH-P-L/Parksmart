@@ -31,7 +31,7 @@ export default function BusBookingSlotGrid({
   onOpenEdit,
   readOnly = false,
 }) {
-  const { isAdmin } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [selectedSlotId, setSelectedSlotId] = useState(null);
   const [activeZone, setActiveZone] = useState('All');
   const [activeFloor, setActiveFloor] = useState('All');
@@ -62,6 +62,12 @@ export default function BusBookingSlotGrid({
   const selectedSlot = useMemo(() => {
     return slots.find((s) => s.id === selectedSlotId) || null;
   }, [slots, selectedSlotId]);
+
+  // Find slot currently checked in by logged-in user
+  const userCheckedInSlot = useMemo(() => {
+    if (!user) return null;
+    return slots.find((s) => s.status === 'occupied' && s.occupied_by === user.id) || null;
+  }, [slots, user]);
 
   // Check-in when parking in slot
   const handleCheckIn = async (slot) => {
@@ -125,6 +131,26 @@ export default function BusBookingSlotGrid({
 
   return (
     <div className="space-y-6">
+      {/* Active User Check-In Status Banner */}
+      {userCheckedInSlot && (
+        <div className="glass-panel flex items-center justify-between rounded-card border-accent/40 bg-accent/10 px-4 py-3 text-xs font-semibold text-accent shadow-glow-mint">
+          <div className="flex items-center gap-2">
+            <span className="text-base">📍</span>
+            <span>
+              You are currently checked in at slot <strong>{userCheckedInSlot.slot_number}</strong> ({userCheckedInSlot.zone_name})
+            </span>
+          </div>
+          <Button
+            variant="danger"
+            size="sm"
+            loading={updatingId === userCheckedInSlot.id}
+            onClick={() => handleCheckOut(userCheckedInSlot)}
+          >
+            Check Out Now
+          </Button>
+        </div>
+      )}
+
       {/* Zone & Floor Selection Header */}
       <div className="glass-panel flex flex-wrap items-center justify-between gap-4 rounded-card p-4">
         <div className="flex flex-wrap items-center gap-2">
@@ -393,23 +419,39 @@ export default function BusBookingSlotGrid({
                 {/* Check In / Check Out Live Action Bar */}
                 <div className="space-y-2 pt-2 border-t border-white/10">
                   {selectedSlot.status !== 'occupied' ? (
-                    <Button
-                      variant="primary"
-                      className="w-full justify-center text-sm font-bold bg-lime text-ink hover:bg-lime/90 shadow-glow-mint"
-                      loading={updatingId === selectedSlot.id}
-                      onClick={() => handleCheckIn(selectedSlot)}
-                    >
-                      <FiCheckCircle className="h-4 w-4" /> Check In to {selectedSlot.slot_number}
-                    </Button>
+                    <>
+                      {userCheckedInSlot && userCheckedInSlot.id !== selectedSlot.id && (
+                        <p className="text-[11px] text-warn font-medium px-1">
+                          ⚠️ You are currently checked in at slot <strong>{userCheckedInSlot.slot_number}</strong>. Please check out from {userCheckedInSlot.slot_number} before parking here.
+                        </p>
+                      )}
+                      <Button
+                        variant="primary"
+                        className="w-full justify-center text-sm font-bold bg-lime text-ink hover:bg-lime/90 shadow-glow-mint"
+                        loading={updatingId === selectedSlot.id}
+                        disabled={Boolean(userCheckedInSlot && userCheckedInSlot.id !== selectedSlot.id)}
+                        onClick={() => handleCheckIn(selectedSlot)}
+                      >
+                        <FiCheckCircle className="h-4 w-4" /> Check In to {selectedSlot.slot_number}
+                      </Button>
+                    </>
                   ) : (
-                    <Button
-                      variant="danger"
-                      className="w-full justify-center text-sm font-bold shadow-glow-danger"
-                      loading={updatingId === selectedSlot.id}
-                      onClick={() => handleCheckOut(selectedSlot)}
-                    >
-                      <FiXCircle className="h-4 w-4" /> Check Out from {selectedSlot.slot_number}
-                    </Button>
+                    <>
+                      {selectedSlot.occupied_by && selectedSlot.occupied_by !== user?.id && !isAdmin ? (
+                        <p className="text-[11px] text-danger font-medium px-1 text-center py-1 bg-danger/10 rounded-lg">
+                          🔒 Occupied by another user. Only the driver who checked in can check out.
+                        </p>
+                      ) : (
+                        <Button
+                          variant="danger"
+                          className="w-full justify-center text-sm font-bold shadow-glow-danger"
+                          loading={updatingId === selectedSlot.id}
+                          onClick={() => handleCheckOut(selectedSlot)}
+                        >
+                          <FiXCircle className="h-4 w-4" /> Check Out from {selectedSlot.slot_number}
+                        </Button>
+                      )}
+                    </>
                   )}
                 </div>
 

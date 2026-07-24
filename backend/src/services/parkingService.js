@@ -123,23 +123,65 @@ export const removeFavorite = async (userId, slotId) => {
 };
 
 // ── check in / check out ──────────────────────────────────────────────────────
-export const checkInSlot = async (id) => {
+export const checkInSlot = async (id, user = null) => {
   const slot = await getSlot(id);
   if (slot.status === 'occupied') {
     throw new ApiError(400, `Slot ${slot.slot_number} is already marked as occupied.`);
   }
-  const updatedSlot = await ParkingSlot.update(id, { status: 'occupied' });
+
+  // Rule 2: One user must not check in more than one slot at a time!
+  if (user) {
+    const allSlots = await ParkingSlot.list({ includeInactive: true });
+    const slotsList = Array.isArray(allSlots) ? allSlots : (allSlots.slots || []);
+    const userOccupiedSlot = slotsList.find(
+      (s) => s.status === 'occupied' && s.occupied_by === user.id
+    );
+
+    if (userOccupiedSlot) {
+      throw new ApiError(
+        400,
+        `You are already checked in at slot ${userOccupiedSlot.slot_number}. Please check out from slot ${userOccupiedSlot.slot_number} before checking in to another slot.`
+      );
+    }
+  }
+
+  const updatedSlot = await ParkingSlot.update(id, {
+    status: 'occupied',
+    occupied_by: user ? user.id : null,
+    occupied_by_name: user ? user.name : null,
+    check_in_time: new Date().toISOString(),
+  });
+
   return {
     slot: updatedSlot,
     status: 'occupied',
     message: `Successfully checked in to slot ${slot.slot_number}.`,
-    check_in_time: new Date().toISOString(),
+    check_in_time: updatedSlot.check_in_time || new Date().toISOString(),
   };
 };
 
-export const checkOutSlot = async (id) => {
+export const checkOutSlot = async (id, user = null) => {
   const slot = await getSlot(id);
-  const updatedSlot = await ParkingSlot.update(id, { status: 'available' });
+
+  if (slot.status !== 'occupied') {
+    throw new ApiError(400, `Slot ${slot.slot_number} is not currently occupied.`);
+  }
+
+  // Rule 1: The user can only checkout if they had checked in!
+  if (user && slot.occupied_by && slot.occupied_by !== user.id && user.role !== 'admin') {
+    throw new ApiError(
+      403,
+      `You cannot check out from slot ${slot.slot_number} because it was checked in by another user.`
+    );
+  }
+
+  const updatedSlot = await ParkingSlot.update(id, {
+    status: 'available',
+    occupied_by: null,
+    occupied_by_name: null,
+    check_in_time: null,
+  });
+
   return {
     slot: updatedSlot,
     status: 'available',
