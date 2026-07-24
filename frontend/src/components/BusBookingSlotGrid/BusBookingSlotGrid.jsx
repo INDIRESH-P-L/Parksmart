@@ -437,7 +437,7 @@ export default function BusBookingSlotGrid({
                     </>
                   ) : (
                     <>
-                      {selectedSlot.occupied_by && selectedSlot.occupied_by !== user?.id && !isAdmin ? (
+                      {selectedSlot.occupied_by && selectedSlot.occupied_by !== user?.id ? (
                         <p className="text-[11px] text-danger font-medium px-1 text-center py-1 bg-danger/10 rounded-lg">
                           🔒 Occupied by another user. Only the driver who checked in can check out.
                         </p>

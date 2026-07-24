@@ -161,14 +161,18 @@ export const checkInSlot = async (id, user = null) => {
 };
 
 export const checkOutSlot = async (id, user = null) => {
+  if (!user) {
+    throw new ApiError(401, 'Authentication required to check out from a parking slot.');
+  }
+
   const slot = await getSlot(id);
 
   if (slot.status !== 'occupied') {
     throw new ApiError(400, `Slot ${slot.slot_number} is not currently occupied.`);
   }
 
-  // Rule 1: The user can only checkout if they had checked in!
-  if (user && slot.occupied_by && slot.occupied_by !== user.id && user.role !== 'admin') {
+  // Strict ownership check: One user CANNOT check out another user's checkin!
+  if (slot.occupied_by && slot.occupied_by !== user.id) {
     throw new ApiError(
       403,
       `You cannot check out from slot ${slot.slot_number} because it was checked in by another user.`
