@@ -2,8 +2,10 @@
   "name": "parksmart",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "ParkSmart — Smart Parking Assistant monorepo (backend API, React frontend, Flutter mobile)",
   "scripts": {
+    "build": "cd frontend && npm install && npm run build",
     "dev": "concurrently -n backend,frontend -c green,cyan \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
     "dev:backend": "npm --prefix backend run dev",
     "dev:frontend": "npm --prefix frontend run dev",
@@ -14,3 +16,4 @@
     "concurrently": "^9.1.0"
   }
 }
+
