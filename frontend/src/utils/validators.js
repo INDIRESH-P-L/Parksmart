@@ -1,7 +1,7 @@
 // Client-side form validation. Mirrors the backend zod rules so users get
 // instant feedback; the server remains the source of truth.
 
-export const isEmail = (value = '') => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+export const isEmail = (value = '') => /^[^\s@]+@[^\s@]+$/.test(value.trim());
 
 export const validateLogin = ({ email, password }) => {
   const errors = {};

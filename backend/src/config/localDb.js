@@ -402,6 +402,7 @@ function seed() {
   // SECE accounts
   const userSpecs = [
     ['SECE Admin', 'admin@sece.ac.in', 'Admin@123', 'admin', '+91 98765 43210', null],
+    ['SECE Admin SSECE', 'admin@ssece', 'admin@123', 'admin', '+91 98765 43219', null],
     ['Gate Operator', 'operator@sece.ac.in', 'Operator@123', 'operator', '+91 98765 43211', null],
     ['Eshwar User', 'user@sece.ac.in', 'User@123', 'user', '+91 98765 43212', 'TN-37-AB-1234'],
     ['Asha Admin', 'admin@parksmart.dev', 'Admin@123', 'admin', '+91 90000 00001', null],

@@ -21,14 +21,13 @@ import { cn } from '../../utils/helpers.js';
 const USER_ITEMS = [
   { to: '/dashboard', label: 'Dashboard', icon: FiGrid },
   { to: '/slot-selection', label: 'Slot Selection', icon: FiCalendar },
-  { to: '/manage-slots', label: 'Slot CRUD Manager', icon: FiSettings },
   { to: '/map', label: 'Campus Map', icon: FiMap },
   { to: '/profile', label: 'Profile', icon: FiUser },
 ];
 
 const ADMIN_ITEMS = [
   { to: '/admin', label: 'Admin Home', icon: FiShield, end: true },
-  { to: '/admin/slots', label: 'Manage Slots', icon: FiSettings },
+  { to: '/manage-slots', label: 'Slot CRUD Manager', icon: FiSettings },
   { to: '/admin/users', label: 'Users', icon: FiUsers },
   { to: '/admin/analytics', label: 'Analytics', icon: FiBarChart2 },
 ];

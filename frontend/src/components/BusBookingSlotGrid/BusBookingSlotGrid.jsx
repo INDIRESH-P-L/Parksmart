@@ -22,6 +22,7 @@ import Modal from '../Modal/Modal.jsx';
 import MorphCard from '../MorphCard/MorphCard.jsx';
 import { notifySuccess, notifyError } from '../Notification/Notification.jsx';
 import * as parkingService from '../../services/parkingService.js';
+import { useAuth } from '../../hooks/useAuth.js';
 
 export default function BusBookingSlotGrid({
   slots = [],
@@ -30,6 +31,7 @@ export default function BusBookingSlotGrid({
   onOpenEdit,
   readOnly = false,
 }) {
+  const { isAdmin } = useAuth();
   const [selectedSlotId, setSelectedSlotId] = useState(null);
   const [activeZone, setActiveZone] = useState('All');
   const [activeFloor, setActiveFloor] = useState('All');
@@ -412,7 +414,7 @@ export default function BusBookingSlotGrid({
                 </div>
 
                 {/* CRUD Actions Panel */}
-                {!readOnly && (
+                {!readOnly && isAdmin && (
                   <div className="space-y-2.5 pt-2 border-t border-white/10">
                     <div className="grid grid-cols-2 gap-2">
                       {onOpenEdit && (

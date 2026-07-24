@@ -89,7 +89,14 @@ export default function AppRoutes() {
       >
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/slot-selection" element={<SlotSelection />} />
-        <Route path="/manage-slots" element={<ManageSlots />} />
+        <Route
+          path="/manage-slots"
+          element={
+            <ProtectedRoute roles={['admin']}>
+              <ManageSlots />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/map" element={<ParkingMapPage />} />
         <Route path="/slots/:id" element={<SlotDetails />} />
         <Route path="/profile" element={<Profile />} />
