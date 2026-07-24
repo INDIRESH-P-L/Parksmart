@@ -121,3 +121,30 @@ export const removeFavorite = async (userId, slotId) => {
   const removed = await Favorite.remove(userId, slotId);
   if (removed.length === 0) throw new ApiError(404, 'Favorite not found');
 };
+
+// ── check in / check out ──────────────────────────────────────────────────────
+export const checkInSlot = async (id) => {
+  const slot = await getSlot(id);
+  if (slot.status === 'occupied') {
+    throw new ApiError(400, `Slot ${slot.slot_number} is already marked as occupied.`);
+  }
+  const updatedSlot = await ParkingSlot.update(id, { status: 'occupied' });
+  return {
+    slot: updatedSlot,
+    status: 'occupied',
+    message: `Successfully checked in to slot ${slot.slot_number}.`,
+    check_in_time: new Date().toISOString(),
+  };
+};
+
+export const checkOutSlot = async (id) => {
+  const slot = await getSlot(id);
+  const updatedSlot = await ParkingSlot.update(id, { status: 'available' });
+  return {
+    slot: updatedSlot,
+    status: 'available',
+    message: `Successfully checked out from slot ${slot.slot_number}.`,
+    check_out_time: new Date().toISOString(),
+  };
+};
+

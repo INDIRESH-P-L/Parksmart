@@ -17,6 +17,8 @@ export const listSlots = (filters = {}) => {
 export const getSlot = (id) => api.get(`/parking/slots/${id}`);
 export const availability = () => api.get('/parking/availability');
 export const heatmap = () => api.get('/parking/heatmap'); // admin
+export const checkIn = (id) => api.post(`/parking/slots/${id}/check-in`);
+export const checkOut = (id) => api.post(`/parking/slots/${id}/check-out`);
 
 // Favorites
 export const listFavorites = () => api.get('/users/favorites');

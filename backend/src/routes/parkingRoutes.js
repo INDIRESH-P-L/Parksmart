@@ -1,5 +1,4 @@
-import { Router } from 'express';
-import { listSlots, getSlot, availability, heatmap } from '../controllers/parkingController.js';
+import { listSlots, getSlot, availability, heatmap, checkInSlot, checkOutSlot } from '../controllers/parkingController.js';
 import { auth } from '../middleware/auth.js';
 import { admin } from '../middleware/admin.js';
 import { validate } from '../middleware/validate.js';
@@ -14,5 +13,7 @@ router.get('/availability', availability);
 // but heatmap must NOT be public — admin-only aggregate view.
 router.get('/heatmap', auth, admin, heatmap);
 router.get('/slots/:id', validate(idParamSchema, 'params'), getSlot);
+router.post('/slots/:id/check-in', validate(idParamSchema, 'params'), checkInSlot);
+router.post('/slots/:id/check-out', validate(idParamSchema, 'params'), checkOutSlot);
 
 export default router;

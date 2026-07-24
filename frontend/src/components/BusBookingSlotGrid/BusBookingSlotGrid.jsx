@@ -61,6 +61,34 @@ export default function BusBookingSlotGrid({
     return slots.find((s) => s.id === selectedSlotId) || null;
   }, [slots, selectedSlotId]);
 
+  // Check-in when parking in slot
+  const handleCheckIn = async (slot) => {
+    setUpdatingId(slot.id);
+    try {
+      await parkingService.checkIn(slot.id);
+      notifySuccess(`Checked IN to slot ${slot.slot_number} successfully!`);
+      onSlotUpdate?.();
+    } catch (err) {
+      notifyError(err.message);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  // Check-out when leaving slot
+  const handleCheckOut = async (slot) => {
+    setUpdatingId(slot.id);
+    try {
+      await parkingService.checkOut(slot.id);
+      notifySuccess(`Checked OUT from slot ${slot.slot_number} successfully!`);
+      onSlotUpdate?.();
+    } catch (err) {
+      notifyError(err.message);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
   // Quick toggle status (Available ↔ Occupied)
   const handleToggleStatus = async (slot) => {
     const nextStatus = slot.status === 'occupied' ? 'available' : 'occupied';
@@ -192,10 +220,12 @@ export default function BusBookingSlotGrid({
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-8 md:gap-12">
                 {/* Left Parking Seats Column */}
+                {/* Lower Deck Column (Ground Bay) */}
                 <div className="space-y-3">
-                  <p className="text-center text-[10px] font-bold uppercase tracking-widest text-[var(--text-mut)]">
-                    Left Bay (Bay A)
-                  </p>
+                  <div className="flex items-center justify-between px-1 text-[11px] font-bold uppercase tracking-widest text-[var(--text-mut)]">
+                    <span>Lower Deck (Ground)</span>
+                    <span className="text-base" title="Driver / Entry Side">☸️</span>
+                  </div>
                   <div className="grid grid-cols-2 gap-3">
                     {leftDeckSlots.map((slot) => {
                       const isSelected = slot.id === selectedSlotId;
@@ -240,10 +270,12 @@ export default function BusBookingSlotGrid({
                 </div>
 
                 {/* Right Parking Seats Column */}
+                {/* Upper Deck Column (Floor 1 / Bay B) */}
                 <div className="space-y-3">
-                  <p className="text-center text-[10px] font-bold uppercase tracking-widest text-[var(--text-mut)]">
-                    Right Bay (Bay B)
-                  </p>
+                  <div className="flex items-center justify-between px-1 text-[11px] font-bold uppercase tracking-widest text-[var(--text-mut)]">
+                    <span>Upper Deck (Floor 1)</span>
+                    <span className="text-base" title="Upper Deck Access">🅿️</span>
+                  </div>
                   <div className="grid grid-cols-2 gap-3">
                     {rightDeckSlots.map((slot) => {
                       const isSelected = slot.id === selectedSlotId;
@@ -356,19 +388,32 @@ export default function BusBookingSlotGrid({
                   </div>
                 </div>
 
+                {/* Check In / Check Out Live Action Bar */}
+                <div className="space-y-2 pt-2 border-t border-white/10">
+                  {selectedSlot.status !== 'occupied' ? (
+                    <Button
+                      variant="primary"
+                      className="w-full justify-center text-sm font-bold bg-lime text-ink hover:bg-lime/90 shadow-glow-mint"
+                      loading={updatingId === selectedSlot.id}
+                      onClick={() => handleCheckIn(selectedSlot)}
+                    >
+                      <FiCheckCircle className="h-4 w-4" /> Check In to {selectedSlot.slot_number}
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="danger"
+                      className="w-full justify-center text-sm font-bold shadow-glow-danger"
+                      loading={updatingId === selectedSlot.id}
+                      onClick={() => handleCheckOut(selectedSlot)}
+                    >
+                      <FiXCircle className="h-4 w-4" /> Check Out from {selectedSlot.slot_number}
+                    </Button>
+                  )}
+                </div>
+
                 {/* CRUD Actions Panel */}
                 {!readOnly && (
                   <div className="space-y-2.5 pt-2 border-t border-white/10">
-                    <Button
-                      variant="glass"
-                      className="w-full justify-center text-xs"
-                      loading={updatingId === selectedSlot.id}
-                      onClick={() => handleToggleStatus(selectedSlot)}
-                    >
-                      <FiRefreshCw className="h-3.5 w-3.5" /> Toggle (
-                      {selectedSlot.status === 'occupied' ? 'Mark Available' : 'Mark Occupied'})
-                    </Button>
-
                     <div className="grid grid-cols-2 gap-2">
                       {onOpenEdit && (
                         <Button
