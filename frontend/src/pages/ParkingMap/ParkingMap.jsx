@@ -75,8 +75,20 @@ export default function ParkingMapPage() {
 
   return (
     <PageTransition>
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Live map</h1>
+      <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-accent/20 px-3 py-1 text-xs font-bold text-accent">
+              Sri Eshwar College of Engineering, Coimbatore
+            </span>
+          </div>
+          <h1 className="mt-1.5 text-2xl font-bold tracking-tight md:text-3xl">
+            Live Campus GIS Map
+          </h1>
+          <p className="mt-1 text-xs text-[var(--text-sec)]">
+            Centered at Sri Eshwar College of Engineering (10.8267° N, 76.9942° E). Real-time slot occupancy & walking distance.
+          </p>
+        </div>
         <SearchBar onSearch={(term) => applyFilters({ search: term })} />
       </div>
 

@@ -1,11 +1,6 @@
-// React-Leaflet map with status-coloured divIcon markers.
-// Green markers pulse (CSS ring in globals.css) to advertise availability.
-// On click, the marker's SCREEN position is passed up so the Slot Details
-// panel can fly in from that exact point rather than just appearing.
-import { useMemo } from 'react';
-import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
+import { useMemo, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { useEffect } from 'react';
 import { useTheme } from '../../context/ThemeContext.jsx';
 import {
   TILE_URL,
@@ -31,6 +26,14 @@ const iconFor = (status) => {
   }
   return ICONS[status];
 };
+
+// Sri Eshwar College Main Campus Landmark Pin Icon
+const CAMPUS_PIN_ICON = L.divIcon({
+  className: '',
+  html: `<div class="flex items-center gap-1 bg-[#D7FF1F] text-[#0A0D14] font-bold text-[11px] px-2.5 py-1 rounded-full shadow-lg border-2 border-white tracking-wide whitespace-nowrap">🏫 Sri Eshwar College</div>`,
+  iconSize: [150, 32],
+  iconAnchor: [75, 16],
+});
 
 // Imperatively recentre when the computed centre changes (MapContainer's
 // `center` prop is initial-only by design).
@@ -78,10 +81,23 @@ export default function ParkingMap({
         zoom={zoom}
         scrollWheelZoom
         className="h-full min-h-[320px] w-full rounded-[20px]"
-        // taller default for the dedicated map page comes from the parent's className
       >
         <TileLayer key={tiles} url={tiles} attribution={TILE_ATTRIBUTION} />
         <Recenter center={center} />
+        
+        {/* Sri Eshwar College of Engineering Main Campus Pin */}
+        <Marker position={CAMPUS_CENTER} icon={CAMPUS_PIN_ICON}>
+          <Popup>
+            <div className="p-1 text-center font-sans">
+              <h3 className="font-bold text-sm text-gray-900">Sri Eshwar College of Engineering</h3>
+              <p className="text-xs text-gray-600 mt-0.5">Vadasithur via, Kinathukadavu, Coimbatore 641202</p>
+              <div className="mt-1.5 inline-block bg-lime-100 text-emerald-800 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                🅿️ Smart Campus Parking Hub
+              </div>
+            </div>
+          </Popup>
+        </Marker>
+
         {markers}
       </MapContainer>
     </div>
