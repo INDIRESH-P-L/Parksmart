@@ -42,8 +42,17 @@ if (!parsed.success) {
   process.exit(1);
 }
 
+let rawSupabaseUrl = parsed.data.SUPABASE_URL || '';
+if (rawSupabaseUrl.startsWith('postgresql://') || rawSupabaseUrl.startsWith('postgres://')) {
+  const match = rawSupabaseUrl.match(/postgres\.([a-z0-9]+):/i);
+  if (match && match[1]) {
+    rawSupabaseUrl = `https://${match[1]}.supabase.co`;
+  }
+}
+
 export const env = {
   ...parsed.data,
+  SUPABASE_URL: rawSupabaseUrl,
   isProd: parsed.data.NODE_ENV === 'production',
   // CORS_ORIGIN is a comma-separated allow-list → normalised to an array once here.
   corsOrigins: parsed.data.CORS_ORIGIN.split(',')

@@ -112,7 +112,7 @@ class _SlotDetailsScreenState extends State<SlotDetailsScreen> {
               const SizedBox(height: 20),
               Row(
                 children: [
-                  _metric('Rate', '${Format.currency(slot.hourlyRate)}/hr', AppColors.accent),
+                  _metric('Status', SlotStatus.label[slot.status] ?? slot.status, AppColors.accent),
                   const SizedBox(width: 10),
                   _metric('Cover', slot.type, AppColors.textPrimary),
                   const SizedBox(width: 10),

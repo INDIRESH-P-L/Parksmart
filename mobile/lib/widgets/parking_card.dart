@@ -55,10 +55,6 @@ class ParkingCard extends StatelessWidget {
               const SizedBox(width: 6),
               _chip(slot.type),
               const Spacer(),
-              Text(
-                '${Format.currency(slot.hourlyRate)}/hr',
-                style: const TextStyle(color: AppColors.accent, fontWeight: FontWeight.w700),
-              ),
             ],
           ),
           if (onBook != null) ...[

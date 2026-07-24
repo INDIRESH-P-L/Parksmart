@@ -20,7 +20,7 @@
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { randomUUID } from 'node:crypto';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { env } from './env.js';
 
 const DB_FILE = fileURLToPath(new URL('../../.local-db.json', import.meta.url));
@@ -369,26 +369,26 @@ const atDay = (daysAgo, hour, minute = 0) => {
 const fromNow = (mins) => new Date(Date.now() + mins * 60 * 1000).toISOString();
 
 function seed() {
-  // 18 slots across 6 campus zones (same data as seed.sql).
+  // Parking slots for Sri Eshwar College of Engineering, Coimbatore
   const slotSpecs = [
-    ['NG-01', 12.97492, 77.5931, 'available', 'open', 'Ground', 'North Gate', 'standard', 20],
-    ['NG-02', 12.97488, 77.59338, 'available', 'open', 'Ground', 'North Gate', 'disability', 20],
-    ['NG-03', 12.97481, 77.59366, 'available', 'open', 'Ground', 'North Gate', 'standard', 20],
-    ['NG-04', 12.97474, 77.59394, 'available', 'open', 'Ground', 'North Gate', 'standard', 20],
-    ['LB-01', 12.97255, 77.5952, 'available', 'covered', 'P1', 'Library Block', 'standard', 30],
-    ['LB-02', 12.9725, 77.59548, 'available', 'covered', 'P1', 'Library Block', 'ev', 35],
-    ['LB-03', 12.97244, 77.59576, 'available', 'covered', 'P2', 'Library Block', 'standard', 30],
-    ['LB-04', 12.97238, 77.59604, 'available', 'covered', 'P2', 'Library Block', 'standard', 30],
-    ['AD-01', 12.97148, 77.5943, 'available', 'covered', 'Ground', 'Admin Block', 'disability', 35],
-    ['AD-02', 12.97142, 77.59458, 'available', 'covered', 'Ground', 'Admin Block', 'standard', 35],
-    ['AD-03', 12.97136, 77.59486, 'available', 'covered', 'P1', 'Admin Block', 'vip', 60],
-    ['AU-01', 12.97042, 77.5956, 'available', 'open', 'Ground', 'Auditorium', 'standard', 25],
-    ['AU-02', 12.97036, 77.59588, 'occupied', 'open', 'Ground', 'Auditorium', 'standard', 25],
-    ['AU-03', 12.9703, 77.59616, 'available', 'open', 'Ground', 'Auditorium', 'ev', 30],
-    ['SC-01', 12.96905, 77.5935, 'available', 'open', 'Ground', 'Sports Complex', 'standard', 20],
-    ['SC-02', 12.96898, 77.5938, 'occupied', 'open', 'Ground', 'Sports Complex', 'standard', 20],
-    ['HC-01', 12.97205, 77.5972, 'available', 'covered', 'Ground', 'Hostel Circle', 'standard', 25],
-    ['HC-02', 12.97198, 77.59748, 'reserved', 'covered', 'Ground', 'Hostel Circle', 'standard', 25],
+    ['SE-M01', 10.8272, 76.9938, 'available', 'open', 'Ground', 'Mechanical Block', 'standard', 20],
+    ['SE-M02', 10.8272, 76.9940, 'occupied', 'open', 'Ground', 'Mechanical Block', 'standard', 20],
+    ['SE-M03', 10.8273, 76.9939, 'available', 'open', 'Ground', 'Mechanical Block', 'ev', 25],
+    ['SE-M04', 10.8273, 76.9941, 'available', 'open', 'Ground', 'Mechanical Block', 'disability', 20],
+    ['SE-C01', 10.8269, 76.9945, 'available', 'covered', 'P1', 'CSE & IT Block', 'standard', 30],
+    ['SE-C02', 10.8269, 76.9947, 'occupied', 'covered', 'P1', 'CSE & IT Block', 'ev', 35],
+    ['SE-C03', 10.8270, 76.9946, 'available', 'covered', 'P2', 'CSE & IT Block', 'standard', 30],
+    ['SE-C04', 10.8270, 76.9948, 'reserved', 'covered', 'P2', 'CSE & IT Block', 'vip', 50],
+    ['SE-A01', 10.8263, 76.9940, 'available', 'covered', 'Ground', 'Admin & Library Block', 'disability', 35],
+    ['SE-A02', 10.8263, 76.9942, 'occupied', 'covered', 'Ground', 'Admin & Library Block', 'standard', 35],
+    ['SE-A03', 10.8264, 76.9941, 'available', 'covered', 'P1', 'Admin & Library Block', 'vip', 60],
+    ['SE-A04', 10.8264, 76.9943, 'available', 'covered', 'P1', 'Admin & Library Block', 'standard', 35],
+    ['SE-AU01', 10.8258, 76.9947, 'available', 'open', 'Ground', 'Auditorium Block', 'standard', 25],
+    ['SE-AU02', 10.8258, 76.9949, 'occupied', 'open', 'Ground', 'Auditorium Block', 'standard', 25],
+    ['SE-AU03', 10.8259, 76.9948, 'available', 'open', 'Ground', 'Auditorium Block', 'ev', 30],
+    ['SE-SP01', 10.8275, 76.9948, 'available', 'open', 'Ground', 'Sports Complex', 'standard', 20],
+    ['SE-SP02', 10.8275, 76.9950, 'occupied', 'open', 'Ground', 'Sports Complex', 'standard', 20],
+    ['SE-SP03', 10.8276, 76.9949, 'available', 'open', 'Ground', 'Sports Complex', 'standard', 20],
   ];
   const slotByNumber = {};
   for (const [slot_number, latitude, longitude, status, type, floor, zone_name, slot_type, hourly_rate] of slotSpecs) {
@@ -399,63 +399,28 @@ function seed() {
     slotByNumber[slot_number] = row;
   }
 
-  // 4 demo accounts — passwords bcrypt-hashed here so login works identically
-  // to the Supabase path. (Same credentials as seed.sql.)
+  // SECE accounts
   const userSpecs = [
+    ['SECE Admin', 'admin@sece.ac.in', 'Admin@123', 'admin', '+91 98765 43210', null],
+    ['Gate Operator', 'operator@sece.ac.in', 'Operator@123', 'operator', '+91 98765 43211', null],
+    ['Eshwar User', 'user@sece.ac.in', 'User@123', 'user', '+91 98765 43212', 'TN-37-AB-1234'],
     ['Asha Admin', 'admin@parksmart.dev', 'Admin@123', 'admin', '+91 90000 00001', null],
-    ['Omar Operator', 'operator@parksmart.dev', 'Operator@123', 'operator', '+91 90000 00002', null],
     ['Uma User', 'user@parksmart.dev', 'User@123', 'user', '+91 90000 00003', 'KA-01-AB-1234'],
-    ['Dev Driver', 'driver@parksmart.dev', 'Driver@123', 'user', '+91 90000 00004', 'KA-05-CD-5678'],
   ];
-  const userByEmail = {};
   for (const [name, email, password, role, phone_number, vehicle_number] of userSpecs) {
     const row = applyDefaults('users', {
       name, email, password: bcrypt.hashSync(password, 12), role, phone_number, vehicle_number,
     });
     store.users.push(row);
-    userByEmail[email] = row;
   }
 
-  const uma = userByEmail['user@parksmart.dev'];
-  const dev = userByEmail['driver@parksmart.dev'];
-
-  // Booking history so dashboards + analytics are populated on first run.
-  const bookingSpecs = [
-    { user: uma, slot: 'LB-01', booking_time: atDay(3, 8, 40), start_time: atDay(3, 9), end_time: atDay(3, 11), check_in_time: atDay(3, 9, 4), check_out_time: atDay(3, 10, 52), total_price: 60, status: 'completed' },
-    { user: uma, slot: 'NG-01', booking_time: atDay(2, 17, 30), start_time: atDay(2, 18), end_time: atDay(2, 20), check_in_time: atDay(2, 18, 2), check_out_time: atDay(2, 19, 58), total_price: 40, status: 'completed' },
-    { user: uma, slot: 'AD-02', booking_time: atDay(1, 9, 45), start_time: atDay(1, 10), end_time: atDay(1, 12), check_in_time: atDay(1, 10, 6), check_out_time: atDay(1, 11, 47), total_price: 70, status: 'completed' },
-    { user: uma, slot: 'AU-01', booking_time: atDay(1, 13, 20), start_time: atDay(1, 14), end_time: atDay(1, 16), total_price: 50, status: 'cancelled' },
-    { user: uma, slot: 'LB-03', booking_time: fromNow(-70), start_time: fromNow(-60), end_time: fromNow(120), check_in_time: fromNow(-55), total_price: 90, status: 'active' },
-    { user: uma, slot: 'NG-03', booking_time: nowIso(), start_time: fromNow(120), end_time: fromNow(240), total_price: 40, status: 'confirmed' },
-    { user: dev, slot: 'HC-01', booking_time: atDay(6, 8, 50), start_time: atDay(6, 9), end_time: atDay(6, 10, 30), check_in_time: atDay(6, 9, 1), check_out_time: atDay(6, 10, 28), total_price: 37.5, status: 'completed' },
-    { user: dev, slot: 'LB-04', booking_time: atDay(5, 9, 30), start_time: atDay(5, 10), end_time: atDay(5, 12), check_in_time: atDay(5, 10, 3), check_out_time: atDay(5, 11, 55), total_price: 60, status: 'completed' },
-    { user: dev, slot: 'SC-01', booking_time: atDay(4, 17, 40), start_time: atDay(4, 18), end_time: atDay(4, 19), check_in_time: atDay(4, 18, 5), check_out_time: atDay(4, 18, 57), total_price: 20, status: 'completed' },
-    { user: dev, slot: 'AU-03', booking_time: atDay(2, 8, 45), start_time: atDay(2, 9), end_time: atDay(2, 11), check_in_time: atDay(2, 9, 2), check_out_time: atDay(2, 10, 50), total_price: 60, status: 'completed' },
-  ];
-  for (const spec of bookingSpecs) {
-    const slot = slotByNumber[spec.slot];
-    const row = applyDefaults('bookings', {
-      user_id: spec.user.id,
-      slot_id: slot.id,
-      booking_time: spec.booking_time,
-      start_time: spec.start_time,
-      end_time: spec.end_time,
-      check_in_time: spec.check_in_time ?? null,
-      check_out_time: spec.check_out_time ?? null,
-      total_price: spec.total_price,
-      status: spec.status,
-    });
-    store.bookings.push(row);
-    syncSlot(slot.id); // active → occupied, confirmed → reserved, etc.
-  }
-
-  // Welcome notification per user.
+  // Welcome notifications
   for (const user of store.users) {
     store.notifications.push(
       applyDefaults('notifications', {
         user_id: user.id,
-        title: 'Welcome to ParkSmart 🎉',
-        message: 'Find a slot on the live map, book it, and show your QR ticket at the gate.',
+        title: 'Welcome to Sri Eshwar Smart Parking 🅿️',
+        message: 'Manage and select your parking slot dynamically in real time.',
       })
     );
   }

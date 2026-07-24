@@ -153,7 +153,7 @@ class _ResultSheet extends StatelessWidget {
               Text(booking.slot?.slotNumber ?? '',
                   style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: AppColors.accent)),
               const SizedBox(height: 4),
-              Text('${booking.slot?.zoneName ?? ''} · ${Format.currency(booking.totalPrice)}',
+              Text(booking.slot?.zoneName ?? '',
                   style: const TextStyle(color: AppColors.textSecondary)),
               const SizedBox(height: 8),
               StatusBadge(label: BookingStatus.label[booking.status] ?? booking.status, color: color),

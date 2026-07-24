@@ -18,11 +18,10 @@ class AppConfig {
     defaultValue: 'http://10.0.2.2:5000/api/v1',
   );
 
-  /// Fallback map centre — the seeded "Evergreen Institute" campus. The map
-  /// recentres on real slot data once it loads.
-  static const double campusLat = 12.9716;
-  static const double campusLng = 77.5946;
-  static const double defaultZoom = 16;
+  /// Fallback map centre — Sri Eshwar College of Engineering, Coimbatore.
+  static const double campusLat = 10.8267;
+  static const double campusLng = 76.9942;
+  static const double defaultZoom = 17;
 
   /// Average walking speed (km/h) for the "distance to slot" estimate.
   static const double avgWalkKmh = 4.8;

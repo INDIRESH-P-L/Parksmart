@@ -5,11 +5,10 @@ import { env } from './config/env.js';
 import { logger } from './utils/logger.js';
 import { checkConnection } from './config/db.js';
 
+await checkConnection();
+
 const server = app.listen(env.PORT, () => {
   logger.info(`ParkSmart API listening on http://localhost:${env.PORT} (${env.NODE_ENV})`);
-  // Non-blocking: warns loudly if Supabase creds/schema aren't set up yet,
-  // but keeps /health alive so deploys and tooling can still probe the box.
-  checkConnection();
 });
 
 const shutdown = (signal) => {

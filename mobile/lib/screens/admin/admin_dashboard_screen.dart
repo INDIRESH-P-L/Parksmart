@@ -79,7 +79,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       ('Occupancy', '${occupancy.round()}%', AppColors.accent),
       ('Bookings today', '${bookings['today'] ?? 0}', AppColors.lime),
       ('Active now', '${bookings['active'] ?? 0}', AppColors.mintSoft),
-      ('Revenue 30d', Format.currency(revenue['last30Days'] as num?), AppColors.accent),
       ('Users', '${users['total'] ?? 0}', AppColors.textPrimary),
       ('Total bookings', '${bookings['total'] ?? 0}', AppColors.textPrimary),
     ];

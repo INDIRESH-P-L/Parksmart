@@ -163,11 +163,7 @@ export default function Analytics() {
                 <CartesianGrid stroke={GRID} vertical={false} />
                 <XAxis dataKey="label" tick={{ fill: AXIS, fontSize: 10 }} interval={1} axisLine={false} tickLine={false} />
                 <YAxis yAxisId="bookings" allowDecimals={false} tick={{ fill: AXIS, fontSize: 10 }} axisLine={false} tickLine={false} />
-                <YAxis yAxisId="revenue" orientation="right" tick={{ fill: AXIS, fontSize: 10 }} axisLine={false} tickLine={false} />
-                <Tooltip cursor={{ fill: 'rgba(255,255,255,0.04)' }} contentStyle={TOOLTIP_STYLE} />
-                <Legend wrapperStyle={{ fontSize: 11, color: AXIS }} />
                 <Bar yAxisId="bookings" dataKey="bookings" name="Bookings" fill={MINT} fillOpacity={0.85} radius={[6, 6, 0, 0]} />
-                <Line yAxisId="revenue" type="monotone" dataKey="revenue" name="Revenue (₹)" stroke={ACCENT} strokeWidth={2} dot={false} />
               </ComposedChart>
             </ResponsiveContainer>
           </div>

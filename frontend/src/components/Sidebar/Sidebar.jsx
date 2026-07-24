@@ -20,9 +20,9 @@ import { cn } from '../../utils/helpers.js';
 
 const USER_ITEMS = [
   { to: '/dashboard', label: 'Dashboard', icon: FiGrid },
-  { to: '/reserve', label: 'Reserve Slot', icon: FiCalendar },
+  { to: '/slot-selection', label: 'Slot Selection', icon: FiCalendar },
+  { to: '/manage-slots', label: 'Slot CRUD Manager', icon: FiSettings },
   { to: '/map', label: 'Campus Map', icon: FiMap },
-  { to: '/my-bookings', label: 'My Reservations', icon: FiBookmark },
   { to: '/profile', label: 'Profile', icon: FiUser },
 ];
 

@@ -14,7 +14,7 @@ import * as parkingService from '../../services/parkingService.js';
 import { notifySuccess, notifyError } from '../../components/Notification/Notification.jsx';
 import { validateSlotForm } from '../../utils/validators.js';
 import { SLOT_STATUS, SLOT_TYPES, CAMPUS_CENTER } from '../../utils/constants.js';
-import { cn, formatCurrency } from '../../utils/helpers.js';
+import { cn } from '../../utils/helpers.js';
 import { listItem } from '../../utils/motionPresets.js';
 
 const EMPTY_FORM = {
@@ -211,7 +211,7 @@ export default function ManageSlots() {
                       <span className="rounded-full bg-white/5 px-2 py-0.5 capitalize text-[var(--text-sec)]">
                         {SLOT_TYPES[slot.slot_type]?.icon} {slot.type}
                       </span>
-                      <span className="font-semibold text-accent">{formatCurrency(slot.hourly_rate)}/hr</span>
+                      <span className="font-semibold text-accent uppercase">{slot.status}</span>
                     </div>
                     {!slot.is_active && (
                       <p className="mt-2 text-[10px] font-bold uppercase tracking-wide text-danger">Inactive</p>
@@ -246,11 +246,7 @@ export default function ManageSlots() {
             <label className="mb-1.5 block text-xs font-medium text-[var(--text-sec)]">Floor</label>
             <input value={form.floor} onChange={set('floor')} placeholder="Ground / P1" className="input-glass" />
           </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-medium text-[var(--text-sec)]">Hourly rate (₹)</label>
-            <input type="number" min="0" step="0.5" value={form.hourly_rate} onChange={set('hourly_rate')} className={cn('input-glass', errors.hourly_rate && 'input-error')} />
-            {errors.hourly_rate && <p className="mt-1 text-xs text-danger">{errors.hourly_rate}</p>}
-          </div>
+
           <div>
             <label className="mb-1.5 block text-xs font-medium text-[var(--text-sec)]">Latitude</label>
             <input type="number" step="any" value={form.latitude} onChange={set('latitude')} className={cn('input-glass', errors.latitude && 'input-error')} />

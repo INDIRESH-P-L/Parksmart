@@ -15,7 +15,7 @@ import * as parkingService from '../../services/parkingService.js';
 import { notifyError } from '../../components/Notification/Notification.jsx';
 import { validateBookingWindow } from '../../utils/validators.js';
 import { toLocalInputValue, formatDateTime } from '../../utils/formatDate.js';
-import { estimatePrice, formatCurrency, cn } from '../../utils/helpers.js';
+import { cn } from '../../utils/helpers.js';
 import { SLOT_STATUS } from '../../utils/constants.js';
 import { SPRING, EASE } from '../../utils/motionPresets.js';
 
@@ -40,10 +40,7 @@ export default function Booking() {
       .catch((err) => setLoadError(err.message));
   }, [slotId]);
 
-  const price = useMemo(
-    () => (slot ? estimatePrice(slot.hourly_rate, start, end) : 0),
-    [slot, start, end]
-  );
+
 
   const handleConfirm = async () => {
     const windowErrors = validateBookingWindow(start, end);
@@ -110,9 +107,7 @@ export default function Booking() {
                       {slot.floor ? ` · ${slot.floor}` : ''}
                     </p>
                   </div>
-                  <p className="text-sm font-semibold text-accent">
-                    {formatCurrency(slot.hourly_rate)}<span className="text-[10px] font-normal">/hr</span>
-                  </p>
+                  <span className="rounded-full bg-lime/15 px-3 py-1 text-xs font-bold text-lime capitalize">{slot.status}</span>
                 </div>
 
                 {slot.status !== 'available' && (
@@ -152,24 +147,7 @@ export default function Booking() {
                   </div>
                 </div>
 
-                {/* live price preview */}
-                <div className="mt-5 flex items-center justify-between rounded-card bg-accent/10 px-5 py-4">
-                  <p className="text-sm text-[var(--text-sec)]">Estimated total</p>
-                  <AnimatePresence mode="popLayout" initial={false}>
-                    <m.p
-                      key={price}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0, transition: SPRING }}
-                      exit={{ opacity: 0, y: -8 }}
-                      className="text-2xl font-bold text-accent"
-                    >
-                      {formatCurrency(price)}
-                    </m.p>
-                  </AnimatePresence>
-                </div>
-                <p className="mt-2 text-right text-[11px] text-[var(--text-mut)]">
-                  Billed in 15-minute increments — same rule as the server.
-                </p>
+
 
                 <Button size="lg" className="mt-6 w-full" loading={submitting} onClick={handleConfirm}>
                   Confirm booking

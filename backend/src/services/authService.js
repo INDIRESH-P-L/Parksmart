@@ -1,6 +1,4 @@
-// Auth business logic: registration, login, profile updates, and
-// stateless-JWT logout via an in-memory denylist.
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import * as User from '../models/User.js';
 import { signToken, verifyToken } from '../utils/jwt.js';
 import { ApiError } from '../utils/response.js';

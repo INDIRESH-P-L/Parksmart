@@ -1,27 +1,22 @@
-// Dashboard — floating stat widgets, today's bookings, the zone heat widget
-// (density by zone from public availability data) and a favorites quick-book
-// strip.
+// Dashboard — Sri Eshwar College of Engineering Smart Parking Assistant
+// Real-time slot availability, bus-deck quick pick, and campus parking analytics.
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { m } from 'framer-motion';
-import { FiArrowRight, FiZap, FiCalendar } from 'react-icons/fi';
+import { FiArrowRight, FiZap, FiGrid, FiSettings } from 'react-icons/fi';
 import PageTransition from '../../components/PageTransition/PageTransition.jsx';
 import ParkingStats from '../../components/ParkingStats/ParkingStats.jsx';
-import BookingCard from '../../components/BookingCard/BookingCard.jsx';
 import Card from '../../components/Card/Card.jsx';
 import Button from '../../components/Button/Button.jsx';
 import Loader from '../../components/Loader/Loader.jsx';
 import { useAuth } from '../../hooks/useAuth.js';
 import { useParking } from '../../hooks/useParking.js';
-import { useBooking } from '../../hooks/useBooking.js';
-import { isToday } from '../../utils/formatDate.js';
 import { SLOT_TYPES } from '../../utils/constants.js';
 import { staggerContainer, fadeUp, EASE } from '../../utils/motionPresets.js';
 
-// Campus slot categories surfaced on the dashboard (derived from slot_type).
 const CAMPUS_MIX = [
   { key: 'ev', label: 'EV Slots', icon: '⚡' },
-  { key: 'vip', label: 'Faculty Slots', icon: '🎓' },
+  { key: 'vip', label: 'Faculty / VIP', icon: '🎓' },
   { key: 'disability', label: 'Accessible', icon: '♿' },
   { key: 'standard', label: 'General', icon: '🚗' },
 ];
@@ -29,16 +24,13 @@ const CAMPUS_MIX = [
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { availability, fetchAvailability, favorites, slots, fetchSlots } = useParking();
-  const { bookings, loading, fetchMyBookings } = useBooking();
+  const { availability, fetchAvailability, slots, fetchSlots } = useParking();
 
   useEffect(() => {
     fetchAvailability();
-    fetchMyBookings();
     fetchSlots({});
-  }, [fetchAvailability, fetchMyBookings, fetchSlots]);
+  }, [fetchAvailability, fetchSlots]);
 
-  // Available / total per campus category, for the slot-mix strip.
   const mix = CAMPUS_MIX.map((cat) => {
     const inCat = slots.filter((s) => s.is_active !== false && (s.slot_type ?? 'standard') === cat.key);
     return {
@@ -48,9 +40,6 @@ export default function Dashboard() {
     };
   });
 
-  const todays = bookings.filter(
-    (b) => isToday(b.start_time) && !['cancelled'].includes(b.status)
-  );
   const zones = availability?.zones ?? [];
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
@@ -58,9 +47,12 @@ export default function Dashboard() {
   return (
     <PageTransition>
       <m.div variants={staggerContainer(0.08)} initial="initial" animate="animate">
-        {/* greeting */}
+        {/* greeting header */}
         <m.div variants={fadeUp} className="mb-6 flex flex-wrap items-end justify-between gap-3">
           <div>
+            <div className="mb-1 inline-flex items-center gap-1.5 rounded-full bg-accent/15 px-3 py-0.5 text-xs font-bold text-accent">
+              Sri Eshwar College of Engineering, Coimbatore 🎓
+            </div>
             <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
               {greeting}, {user?.name?.split(' ')[0]}
             </h1>
@@ -68,17 +60,22 @@ export default function Dashboard() {
               {new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}
             </p>
           </div>
-          <Button onClick={() => navigate('/reserve')}>
-            <FiCalendar className="h-4 w-4" /> Reserve a slot
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => navigate('/slot-selection')}>
+              <FiGrid className="h-4 w-4" /> Bus Deck Slot Selection
+            </Button>
+            <Button variant="glass" onClick={() => navigate('/manage-slots')}>
+              <FiSettings className="h-4 w-4" /> Slot CRUD Manager
+            </Button>
+          </div>
         </m.div>
 
-        {/* headline counters */}
+        {/* headline stats */}
         <m.div variants={fadeUp}>
           <ParkingStats totals={availability?.totals} />
         </m.div>
 
-        {/* campus slot mix — availability by category */}
+        {/* category breakdown */}
         <m.div variants={fadeUp} className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
           {mix.map((cat) => (
             <div key={cat.key} className="glass-panel flex items-center gap-3 rounded-card px-4 py-3">
@@ -99,41 +96,45 @@ export default function Dashboard() {
         </m.div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-5">
-          {/* today's bookings */}
+          {/* Quick Bus Deck Selection CTA */}
           <m.div variants={fadeUp} className="lg:col-span-3">
             <Card
-              title="Today's bookings"
+              title="Interactive Bus-Style Slot Deck"
               action={
-                <Link to="/my-bookings" className="flex items-center gap-1 text-xs font-medium text-accent hover:underline">
-                  All bookings <FiArrowRight className="h-3 w-3" />
+                <Link
+                  to="/slot-selection"
+                  className="flex items-center gap-1 text-xs font-medium text-accent hover:underline"
+                >
+                  Open Deck View <FiArrowRight className="h-3 w-3" />
                 </Link>
               }
             >
-              {loading ? (
-                <Loader variant="skeleton" lines={2} />
-              ) : todays.length === 0 ? (
-                <div className="py-8 text-center">
-                  <p className="text-sm text-[var(--text-mut)]">No reservations for today.</p>
-                  <Button variant="glass" size="sm" className="mt-4" onClick={() => navigate('/reserve')}>
-                    Reserve a slot
+              <div className="rounded-xl bg-white/[0.03] p-5 text-center border border-white/5">
+                <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-2xl bg-accent/20 text-2xl text-accent">
+                  🚌
+                </div>
+                <h3 className="text-lg font-bold">Bus-Booking Seat Selection UI</h3>
+                <p className="mt-1.5 text-xs text-[var(--text-sec)] max-w-md mx-auto">
+                  View Sri Eshwar College of Engineering parking bays arranged like an interactive bus seat layout. Pick any available slot to select, toggle occupancy, or edit slot details.
+                </p>
+                <div className="mt-4 flex justify-center gap-3">
+                  <Button size="sm" onClick={() => navigate('/slot-selection')}>
+                    Open Bus Deck Selector
+                  </Button>
+                  <Button variant="glass" size="sm" onClick={() => navigate('/manage-slots')}>
+                    Manage Slots (CRUD)
                   </Button>
                 </div>
-              ) : (
-                <div className="space-y-3">
-                  {todays.slice(0, 3).map((booking) => (
-                    <BookingCard key={booking.id} booking={booking} layoutIdPrefix="dash-booking" />
-                  ))}
-                </div>
-              )}
+              </div>
             </Card>
           </m.div>
 
-          {/* zone heat widget — occupancy density per zone */}
+          {/* zone occupancy density */}
           <m.div variants={fadeUp} className="lg:col-span-2">
-            <Card title="Parking heat map">
+            <Card title="Zone Density (Sri Eshwar)">
               {zones.length === 0 ? (
                 <p className="py-8 text-center text-sm text-[var(--text-mut)]">
-                  Zone data appears when slots load.
+                  Zone data loading…
                 </p>
               ) : (
                 <div className="space-y-3.5">
@@ -169,34 +170,6 @@ export default function Dashboard() {
             </Card>
           </m.div>
         </div>
-
-        {/* favorites quick-book */}
-        {favorites.length > 0 && (
-          <m.div variants={fadeUp} className="mt-6">
-            <Card title="Favorite zones">
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {favorites.slice(0, 6).map(({ slot }) =>
-                  slot ? (
-                    <button
-                      key={slot.id}
-                      onClick={() => navigate('/reserve')}
-                      disabled={slot.status !== 'available'}
-                      className="glass-panel ripple-hover flex items-center justify-between rounded-card p-4 text-left transition-transform hover:-translate-y-0.5 disabled:opacity-50"
-                    >
-                      <div>
-                        <p className="font-bold">{slot.slot_number}</p>
-                        <p className="text-xs text-[var(--text-sec)]">{slot.zone_name}</p>
-                      </div>
-                      <span className="grid h-9 w-9 place-items-center rounded-full bg-accent/10 text-accent">
-                        <FiZap className="h-4 w-4" />
-                      </span>
-                    </button>
-                  ) : null
-                )}
-              </div>
-            </Card>
-          </m.div>
-        )}
       </m.div>
     </PageTransition>
   );

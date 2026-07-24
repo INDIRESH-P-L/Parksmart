@@ -79,9 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final user = context.watch<AuthProvider>().user;
     final bookings = context.watch<BookingProvider>().bookings;
     final completed = bookings.where((b) => b.status == 'completed').length;
-    final spent = bookings
-        .where((b) => b.status == 'completed')
-        .fold<double>(0, (sum, b) => sum + b.totalPrice);
+    final active = bookings.where((b) => ['confirmed', 'active'].contains(b.status)).length;
 
     return AppScaffold(
       body: ListView(
@@ -129,7 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(width: 12),
               _stat('Completed', '$completed', AppColors.mintSoft),
               const SizedBox(width: 12),
-              _stat('Spent', Format.currency(spent), AppColors.accent),
+              _stat('Active', '$active', AppColors.accent),
             ],
           ),
           const SizedBox(height: 16),

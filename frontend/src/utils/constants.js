@@ -1,6 +1,4 @@
-// App-wide constants. The API base URL always comes from the environment —
-// never hardcoded (see frontend/.env / .env.example).
-export const API_URL = import.meta.env.VITE_API_URL;
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
 
 export const STORAGE_KEYS = {
   token: 'ps_token',
@@ -29,10 +27,10 @@ export const SLOT_TYPES = {
   vip: { label: 'VIP', icon: '⭐' },
 };
 
-// Fallback map centre — the seeded "Evergreen Institute" campus. The map
+// Fallback map centre — Sri Eshwar College of Engineering, Coimbatore. The map
 // recentres on real slot data as soon as it loads.
-export const CAMPUS_CENTER = [12.9716, 77.5946];
-export const MAP_ZOOM = 16;
+export const CAMPUS_CENTER = [10.8267, 76.9942];
+export const MAP_ZOOM = 17;
 
 // Dark map tiles (CARTO) — free for hackathon/demo use with attribution.
 export const TILE_URL = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';

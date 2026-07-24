@@ -235,12 +235,10 @@ class _SlotSheet extends StatelessWidget {
                 StatusBadge(label: SlotStatus.label[slot.status] ?? slot.status, color: statusColor),
               ],
             ),
-            const SizedBox(height: 8),
             Text(
-              '${slot.zoneName ?? 'Campus'}${slot.floor != null ? ' · ${slot.floor}' : ''} · ${slot.type} · ${Format.currency(slot.hourlyRate)}/hr',
+              '${slot.zoneName ?? 'Campus'}${slot.floor != null ? ' · ${slot.floor}' : ''} · ${slot.type}',
               style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
             ),
-            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(

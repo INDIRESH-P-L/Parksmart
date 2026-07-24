@@ -80,7 +80,7 @@ class BookingCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${_subtitle()} · ${Format.currency(booking.totalPrice)}',
+                  _subtitle(),
                   style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
                 ),
                 if (booking.isCancellable && onCancel != null) ...[

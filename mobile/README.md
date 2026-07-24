@@ -79,11 +79,11 @@ flutter run --dart-define=API_URL=http://192.168.1.20:5000/api/v1
 
 Sign in with the seeded accounts (same as web):
 
-| Role     | Email                    | Password       |
-| -------- | ------------------------ | -------------- |
-| Admin    | `admin@parksmart.dev`    | `Admin@123`    |
-| Operator | `operator@parksmart.dev` | `Operator@123` |
-| User     | `user@parksmart.dev`     | `User@123`     |
+| Role     | Email                 | Password       |
+| -------- | --------------------- | -------------- |
+| Admin    | `admin@sece.ac.in`    | `Admin@123`    |
+| Operator | `operator@sece.ac.in` | `Operator@123` |
+| User     | `user@sece.ac.in`     | `User@123`     |
 
 (The login screen is pre-filled with the demo user for convenience.)
 

@@ -1,9 +1,5 @@
-// Route table. Three shells, each with an AnimatedOutlet so page transitions
-// never hard-cut:
-//  - PublicShell: landing/auth/static pages (own light chrome + footer)
-//  - MainLayout:  authenticated app (Navbar + Sidebar)
-//  - AdminLayout: admin-only console
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+// Route table with AnimatedOutlet for smooth transitions.
+import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { FiArrowRight } from 'react-icons/fi';
 import MainLayout from '../layouts/MainLayout.jsx';
 import AdminLayout from '../layouts/AdminLayout.jsx';
@@ -17,14 +13,12 @@ import Landing from '../pages/Landing/Landing.jsx';
 import Login from '../pages/Login/Login.jsx';
 import Register from '../pages/Register/Register.jsx';
 import Dashboard from '../pages/Dashboard/Dashboard.jsx';
-import Reserve from '../pages/Reserve/Reserve.jsx';
+import SlotSelection from '../pages/SlotSelection/SlotSelection.jsx';
+import ManageSlots from '../pages/ManageSlots/ManageSlots.jsx';
 import ParkingMapPage from '../pages/ParkingMap/ParkingMap.jsx';
 import SlotDetails from '../pages/SlotDetails/SlotDetails.jsx';
-import Booking from '../pages/Booking/Booking.jsx';
-import MyBookings from '../pages/MyBookings/MyBookings.jsx';
 import Profile from '../pages/Profile/Profile.jsx';
 import AdminDashboard from '../pages/AdminDashboard/AdminDashboard.jsx';
-import ManageSlots from '../pages/ManageSlots/ManageSlots.jsx';
 import AdminUsers from '../pages/AdminUsers/AdminUsers.jsx';
 import Analytics from '../pages/Analytics/Analytics.jsx';
 import About from '../pages/About/About.jsx';
@@ -43,7 +37,7 @@ function PublicShell() {
           <Link to="/" className="flex items-center gap-2.5">
             <img src="/logo.png" alt="" className="h-8 w-8 rounded-xl" />
             <span className="text-base font-bold tracking-tight">
-              Park<span className="text-accent">Smart</span>
+              Smart<span className="text-accent">Park</span>
             </span>
           </Link>
           <nav className="flex items-center gap-1 md:gap-3">
@@ -59,7 +53,7 @@ function PublicShell() {
                 to={isAuthed ? '/dashboard' : '/login'}
                 className="inline-flex items-center gap-1.5 rounded-btn bg-accent px-4 py-2 text-sm font-semibold text-ink shadow-glow-accent"
               >
-                {isAuthed ? 'Open app' : 'Sign in'} <FiArrowRight className="h-3.5 w-3.5" />
+                {isAuthed ? 'Open App' : 'Sign In'} <FiArrowRight className="h-3.5 w-3.5" />
               </Link>
             )}
           </nav>
@@ -94,12 +88,16 @@ export default function AppRoutes() {
         }
       >
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/reserve" element={<Reserve />} />
+        <Route path="/slot-selection" element={<SlotSelection />} />
+        <Route path="/manage-slots" element={<ManageSlots />} />
         <Route path="/map" element={<ParkingMapPage />} />
         <Route path="/slots/:id" element={<SlotDetails />} />
-        <Route path="/booking/:slotId" element={<Booking />} />
-        <Route path="/my-bookings" element={<MyBookings />} />
         <Route path="/profile" element={<Profile />} />
+
+        {/* Redirect old booking routes to slot selection */}
+        <Route path="/reserve" element={<Navigate to="/slot-selection" replace />} />
+        <Route path="/my-bookings" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/booking/*" element={<Navigate to="/slot-selection" replace />} />
       </Route>
 
       <Route
