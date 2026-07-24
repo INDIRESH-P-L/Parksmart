@@ -348,7 +348,7 @@ export default function BusBookingSlotGrid({
             </div>
 
             {/* Add New Slot Quick Action */}
-            {!readOnly && onOpenCreate && (
+            {!readOnly && isAdmin && onOpenCreate && (
               <div className="mt-6 flex justify-center border-t border-white/5 pt-4">
                 <Button variant="glass" size="sm" onClick={onOpenCreate}>
                   <FiPlus className="h-4 w-4" /> Add Parking Slot to Deck
