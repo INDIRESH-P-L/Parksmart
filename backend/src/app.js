@@ -16,6 +16,7 @@ import bookingRoutes from './routes/bookingRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
+import internalRoutes from './routes/internalRoutes.js';
 
 const app = express();
 
@@ -63,6 +64,7 @@ app.use('/api/v1/bookings', bookingRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/analytics', analyticsRoutes);
 app.use('/api/v1', notificationRoutes); // /notifications + /feedback
+app.use('/api/v1/internal', internalRoutes); // machine-driven sweeps (shared secret)
 
 app.use(notFound);
 app.use(errorHandler);

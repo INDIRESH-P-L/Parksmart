@@ -37,13 +37,27 @@ create trigger trg_bookings_touch_updated_at
 --   completed/cancelled                    → slot freed, UNLESS another open
 --     booking still holds it — then the strongest remaining claim wins
 --     (an active booking beats a merely-confirmed one).
+--
+-- Reservation holds (parking_slots.reserved_until) are NOT booking-derived, so
+-- an unexpired hold short-circuits this function entirely — otherwise any
+-- booking write on the same slot would wipe a hold another user is relying on.
+-- Expired holds fall through to the normal logic below.
 create or replace function public.sync_slot_status()
 returns trigger
 language plpgsql
 as $$
 declare
   target_status text;
+  held_until timestamptz;
 begin
+  select reserved_until into held_until
+  from parking_slots
+  where id = new.slot_id;
+
+  if held_until is not null and held_until > now() then
+    return new;
+  end if;
+
   if new.status in ('pending', 'confirmed') and new.check_in_time is null then
     target_status := 'reserved';
 

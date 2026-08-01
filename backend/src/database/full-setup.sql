@@ -32,7 +32,11 @@ create table if not exists parking_slots (
   hourly_rate numeric(6,2) default 0,
   is_active boolean default true,
   occupied_by uuid references users(id) on delete set null,
+  occupied_by_name text,
   check_in_time timestamptz,
+  -- Short-lived reservation hold — see schema.sql for the full rationale.
+  reserved_by uuid references users(id) on delete set null,
+  reserved_until timestamptz,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );

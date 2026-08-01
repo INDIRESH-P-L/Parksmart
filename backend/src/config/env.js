@@ -30,6 +30,18 @@ const envSchema = z.object({
   RATE_LIMIT_WINDOW_MINUTES: z.coerce.number().positive().default(15),
   RATE_LIMIT_MAX_AUTH: z.coerce.number().positive().default(20),
   RATE_LIMIT_MAX_BOOKING: z.coerce.number().positive().default(10),
+
+  // How long a slot stays held for a user between selecting it and physically
+  // checking in. Short by design — a long hold starves everyone else.
+  RESERVATION_HOLD_MINUTES: z.coerce.number().positive().default(5),
+  // A check-in older than this is treated as abandoned and force-released.
+  AUTO_CHECKOUT_HOURS: z.coerce.number().positive().default(12),
+  // Set false to keep the in-process sweep timers off (e.g. when a platform
+  // cron drives /internal/sweep instead).
+  ENABLE_SCHEDULER: z.string().optional(),
+  // Shared secret for the internal sweep endpoint. When unset the endpoint is
+  // disabled entirely rather than left open.
+  SWEEP_SECRET: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -58,4 +70,8 @@ export const env = {
   corsOrigins: parsed.data.CORS_ORIGIN.split(',')
     .map((origin) => origin.trim())
     .filter(Boolean),
+  // In-process timers only make sense in a long-lived process. Serverless
+  // invocations are short-lived, so this defaults ON only for `node server.js`
+  // and is explicitly opt-out via ENABLE_SCHEDULER=false.
+  schedulerEnabled: String(parsed.data.ENABLE_SCHEDULER ?? '').toLowerCase() !== 'false',
 };

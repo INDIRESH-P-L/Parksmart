@@ -21,6 +21,10 @@ export const heatmap = asyncHandler(async (_req, res) =>
   ok(res, { zones: await parkingService.heatmap() }, 'Occupancy heat map')
 );
 
+export const reserveSlot = asyncHandler(async (req, res) =>
+  ok(res, await parkingService.reserveSlot(req.params.id, req.user), 'Slot reserved')
+);
+
 export const checkInSlot = asyncHandler(async (req, res) =>
   ok(res, await parkingService.checkInSlot(req.params.id, req.user), 'Check-in successful')
 );

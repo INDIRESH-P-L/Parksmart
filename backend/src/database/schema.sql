@@ -31,6 +31,18 @@ create table parking_slots (
   slot_type text check (slot_type in ('standard','ev','disability','vip')) default 'standard',
   hourly_rate numeric(6,2) default 0,
   is_active boolean default true,
+  -- Live occupancy (set by the check-in/check-out flow, not by bookings).
+  -- occupied_by_name denormalises users.name so the map can label a taken slot
+  -- without a join or a second round-trip.
+  occupied_by uuid references users(id) on delete set null,
+  occupied_by_name text,
+  check_in_time timestamptz,
+  -- Short-lived reservation hold: a user selects a slot and gets an exclusive
+  -- window (RESERVATION_HOLD_MINUTES) to physically arrive and check in.
+  -- Expiry is enforced lazily at read/write time AND swept by a background job,
+  -- so a missed sweep can never strand a slot.
+  reserved_by uuid references users(id) on delete set null,
+  reserved_until timestamptz,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
@@ -81,3 +93,10 @@ create table favorites (
 create index if not exists idx_parking_slots_status on parking_slots(status);
 create index if not exists idx_bookings_user_id on bookings(user_id);
 create index if not exists idx_bookings_slot_id on bookings(slot_id);
+
+-- Sweep-job support. Both are partial: only the rows a sweep can ever match are
+-- indexed, so they stay tiny regardless of table size.
+create index if not exists idx_parking_slots_reserved_until
+  on parking_slots(reserved_until) where status = 'reserved';
+create index if not exists idx_parking_slots_check_in_time
+  on parking_slots(check_in_time) where status = 'occupied';

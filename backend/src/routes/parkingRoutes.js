@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { listSlots, getSlot, availability, heatmap, checkInSlot, checkOutSlot } from '../controllers/parkingController.js';
+import { listSlots, getSlot, availability, heatmap, reserveSlot, checkInSlot, checkOutSlot } from '../controllers/parkingController.js';
 import { auth } from '../middleware/auth.js';
 import { admin } from '../middleware/admin.js';
 import { validate } from '../middleware/validate.js';
@@ -14,6 +14,9 @@ router.get('/availability', availability);
 // but heatmap must NOT be public — admin-only aggregate view.
 router.get('/heatmap', auth, admin, heatmap);
 router.get('/slots/:id', validate(idParamSchema, 'params'), getSlot);
+// Additive: holds a slot for RESERVATION_HOLD_MINUTES. Check-in remains usable
+// directly on an available slot without reserving first.
+router.post('/slots/:id/reserve', auth, validate(idParamSchema, 'params'), reserveSlot);
 router.post('/slots/:id/check-in', auth, validate(idParamSchema, 'params'), checkInSlot);
 router.post('/slots/:id/check-out', auth, validate(idParamSchema, 'params'), checkOutSlot);
 

@@ -6,6 +6,7 @@ import parkingRoutes from '../backend/src/routes/parkingRoutes.js';
 import adminRoutes from '../backend/src/routes/adminRoutes.js';
 import bookingRoutes from '../backend/src/routes/bookingRoutes.js';
 import userRoutes from '../backend/src/routes/userRoutes.js';
+import internalRoutes from '../backend/src/routes/internalRoutes.js';
 import { errorHandler } from '../backend/src/middleware/errorHandler.js';
 
 const app = express();
@@ -34,6 +35,8 @@ app.use('/api/v1/parking', parkingRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/bookings', bookingRoutes);
 app.use('/api/v1/users', userRoutes);
+// Serverless has no long-lived process for timers — a platform cron POSTs here.
+app.use('/api/v1/internal', internalRoutes);
 
 app.use(errorHandler);
 

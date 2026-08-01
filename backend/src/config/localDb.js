@@ -57,6 +57,12 @@ const DEFAULTS = {
     is_active: true,
     floor: null,
     zone_name: null,
+    // Mirrors schema.sql: live occupancy + short-lived reservation hold.
+    occupied_by: null,
+    occupied_by_name: null,
+    check_in_time: null,
+    reserved_by: null,
+    reserved_until: null,
   }),
   bookings: () => ({
     start_time: null,
@@ -109,6 +115,12 @@ export const ensureSeeded = () => {
 const syncSlot = (slotId) => {
   const slot = store.parking_slots.find((s) => s.id === slotId);
   if (!slot) return;
+
+  // An unexpired reservation hold is not booking-derived — leave it alone, or a
+  // booking write would strip a hold another user is relying on. Mirrors the
+  // same guard in triggers.sql's sync_slot_status().
+  if (slot.reserved_until && new Date(slot.reserved_until) > new Date()) return;
+
   const bookings = store.bookings.filter((b) => b.slot_id === slotId);
   const occupied = bookings.some(
     (b) => b.status === 'active' || (b.check_in_time && !b.check_out_time && !['completed', 'cancelled'].includes(b.status))
